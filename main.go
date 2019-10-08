@@ -61,6 +61,7 @@ func fetchExchangeRate() []Currency {
 
 	if err != nil {
 		fmt.Printf("Could not fetch exchange rates. Please try again later.")
+		os.Exit(1)
 	}
 
 	defer response.Body.Close()
@@ -69,6 +70,7 @@ func fetchExchangeRate() []Currency {
 
 	if err != nil {
 		fmt.Printf("Could not read data. Please try again later.")
+		os.Exit(1)
 	}
 
 	var res APIResponse
@@ -77,6 +79,7 @@ func fetchExchangeRate() []Currency {
 
 	if err != nil {
 		fmt.Printf("Could not read data. Please try again later.")
+		os.Exit(1)
 	}
 
 	return res.Conversion.Currency
@@ -108,8 +111,7 @@ func convert(c *cli.Context) {
 
 	if err != nil {
 		fmt.Printf("Please input a valid number for amount.\n")
-
-		return
+		os.Exit(1)
 	}
 
 	currency = strings.ToUpper(currency)
@@ -120,6 +122,7 @@ func convert(c *cli.Context) {
 
 	if (selectedCurrency == Currency{}) {
 		fmt.Println("Could not find the currency you are looking for.\nRun 'forex l' to view all the available currencies.")
+		os.Exit(1)
 	}
 
 	buyingValue, _ := strconv.ParseFloat(selectedCurrency.TargetBuy, 64)
