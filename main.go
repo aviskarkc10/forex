@@ -7,12 +7,13 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/urfave/cli"
 )
 
-const defaultCurrency = "usd"
+const defaultCurrency = "USD"
 const defaultAmount = "1"
 const apiBaseURL = "https://www.nrb.org.np/exportForexJSON.php"
 
@@ -35,13 +36,13 @@ type Currency struct {
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "exchange"
+	app.Name = "forex"
 	app.Usage = "Check the value of NPR against foreign currencies."
 	app.Commands = []cli.Command{
 		{
 			Name:    "convert",
 			Aliases: []string{"c"},
-			Usage:   "Convert foreign currency to NPR and vice versa.",
+			Usage:   "Convert foreign currency to NPR and vice versa(WIP).",
 			Action:  convert,
 		},
 		{
@@ -101,6 +102,33 @@ func convert(c *cli.Context) {
 	amount := c.Args().Get(0)
 	currency := c.Args().Get(1)
 
+	validateArgs(currency, amount)
+
+	amt, err := strconv.Atoi(amount)
+
+	if err != nil {
+		fmt.Printf("Please input a valid number for amount.\n")
+
+		return
+	}
+
+	currency = strings.ToUpper(currency)
+
+	rates := fetchExchangeRate()
+
+	selectedCurrency := getSelectedCurrency(rates, currency)
+
+	if (selectedCurrency == Currency{}) {
+		fmt.Println("Could not find the currency you are looking for.\nRun 'forex l' to view all the available currencies.")
+	}
+
+	buyingValue, _ := strconv.ParseFloat(selectedCurrency.TargetBuy, 64)
+	a := float64(amt)
+
+	fmt.Printf("%.2f %s -> %.2f NPR\n", a, currency, a*buyingValue)
+}
+
+func validateArgs(currency string, amount string) {
 	if currency == "" && amount == "" {
 		fmt.Printf("Using default values '%s' and '%s' for currency and amount.\n", defaultCurrency, defaultAmount)
 
@@ -115,14 +143,16 @@ func convert(c *cli.Context) {
 
 		amount = defaultAmount
 	}
+}
 
-	amt, err := strconv.Atoi(amount)
+func getSelectedCurrency(rates []Currency, currency string) Currency {
+	var selectedCurrency Currency
 
-	if err != nil {
-		fmt.Printf("Please input a valid number for amount.\n")
-
-		return
+	for i := 0; i < len(rates); i++ {
+		if rates[i].BaseCurrency == currency {
+			selectedCurrency = rates[i]
+		}
 	}
 
-	fmt.Printf("This is a work in progress.")
+	return selectedCurrency
 }
