@@ -17,6 +17,7 @@ const defaultCurrency = "USD"
 const defaultAmount = "1"
 const apiBaseURL = "https://www.nrb.org.np/exportForexJSON.php"
 
+// Definition of data the api returns.
 type APIResponse struct {
 	Conversion Conversion `json:"Conversion"`
 }
@@ -56,6 +57,7 @@ func main() {
 	app.Run(os.Args)
 }
 
+// Calls the api to fetch exchange rates and returns the value.
 func fetchExchangeRate() []Currency {
 	response, err := http.Get(apiBaseURL)
 
@@ -85,6 +87,7 @@ func fetchExchangeRate() []Currency {
 	return res.Conversion.Currency
 }
 
+// List all the forex rates.
 func list(c *cli.Context) {
 	rates := fetchExchangeRate()
 	var ratesLength = len(rates)
@@ -101,6 +104,7 @@ func list(c *cli.Context) {
 	w.Flush()
 }
 
+// Convert foreign currency to NPR.
 func convert(c *cli.Context) {
 	amount := c.Args().Get(0)
 	currency := c.Args().Get(1)
@@ -131,6 +135,8 @@ func convert(c *cli.Context) {
 	fmt.Printf("%.2f %s -> %.2f NPR\n", a, currency, a*buyingValue)
 }
 
+// Validate arguments for currency and amount when converting to NPR.
+// When no arguments are present, the default values for currency and amount are USD and 1 respectively.
 func validateArgs(currency string, amount string) {
 	if currency == "" && amount == "" {
 		fmt.Printf("Using default values '%s' and '%s' for currency and amount.\n", defaultCurrency, defaultAmount)
@@ -148,6 +154,7 @@ func validateArgs(currency string, amount string) {
 	}
 }
 
+// Find a single currency from the array of currencies.
 func getSelectedCurrency(rates []Currency, currency string) Currency {
 	var selectedCurrency Currency
 
