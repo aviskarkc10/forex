@@ -129,9 +129,10 @@ func convert(c *cli.Context) {
 		os.Exit(1)
 	}
 
-	buyingValue, _ := strconv.ParseFloat(selectedCurrency.TargetBuy, 64)
+	unitRate := getUnitRate(selectedCurrency)
+	buyingValue := amt * unitRate
 
-	fmt.Printf("%.2f %s -> %.2f NPR\n", amt, currency, amt*buyingValue)
+	fmt.Printf("%.2f %s -> %.2f NPR\n", amt, currency, buyingValue)
 }
 
 // Validate arguments for currency and amount when converting to NPR.
@@ -164,4 +165,14 @@ func getSelectedCurrency(rates []Currency, currency string) Currency {
 	}
 
 	return selectedCurrency
+}
+
+// Get unit rate of a currency
+func getUnitRate(rate Currency) float64 {
+	baseValue, _ := strconv.ParseFloat(rate.BaseValue, 64)
+	targetBuy, _ := strconv.ParseFloat(rate.TargetBuy, 64)
+
+	unitRate := float64(targetBuy) / float64(baseValue)
+
+	return unitRate
 }
