@@ -111,7 +111,7 @@ func convert(c *cli.Context) {
 
 	validateArgs(currency, amount)
 
-	amt, err := strconv.Atoi(amount)
+	amt, err := strconv.ParseFloat(amount, 64)
 
 	if err != nil {
 		fmt.Printf("Please input a valid number for amount.\n")
@@ -130,9 +130,8 @@ func convert(c *cli.Context) {
 	}
 
 	buyingValue, _ := strconv.ParseFloat(selectedCurrency.TargetBuy, 64)
-	a := float64(amt)
 
-	fmt.Printf("%.2f %s -> %.2f NPR\n", a, currency, a*buyingValue)
+	fmt.Printf("%.2f %s -> %.2f NPR\n", amt, currency, amt*buyingValue)
 }
 
 // Validate arguments for currency and amount when converting to NPR.
