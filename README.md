@@ -10,6 +10,12 @@ You can install `forex` by running:
 $ go get github.com/aviskarkc10/forex
 ```
 
+Make sure your PATH includes the $GOPATH/bin directory so your commands can be easily used:
+
+```
+export PATH=$PATH:$GOPATH/bin
+```
+
 ## Usage
 
 To view the available commands, run:
