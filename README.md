@@ -37,6 +37,7 @@ For example:
 $ forex convert 1 USD or forex c 1 USD
 1.00 USD -> 113.34 NPR
 
+# Convert 1 Indian Rupee to NPR
 $ forex convert 1 INR or forex c 1 INR
 1.00 INR -> 1.60 NPR
 ```
