@@ -109,7 +109,8 @@ func convert(c *cli.Context) {
 	amount := c.Args().Get(0)
 	currency := c.Args().Get(1)
 
-	validateArgs(currency, amount)
+	amount = getAmount(amount)
+	currency = getCurrency(currency)
 
 	amt, err := strconv.ParseFloat(amount, 64)
 
@@ -135,23 +136,26 @@ func convert(c *cli.Context) {
 	fmt.Printf("%.2f %s -> %.2f NPR\n", amt, currency, buyingValue)
 }
 
-// Validate arguments for currency and amount when converting to NPR.
-// When no arguments are present, the default values for currency and amount are USD and 1 respectively.
-func validateArgs(currency string, amount string) {
-	if currency == "" && amount == "" {
-		fmt.Printf("Using default values '%s' and '%s' for currency and amount.\n", defaultCurrency, defaultAmount)
-
-		amount = defaultAmount
-		currency = defaultCurrency
-	} else if currency == "" {
-		fmt.Printf("Using default value '%s' for currency.\n", defaultCurrency)
-
-		currency = defaultCurrency
-	} else if amount == "" {
+// Returns default amount when amount is empty. Else returns amount.
+func getAmount(amount string) string {
+	if amount == "" {
 		fmt.Printf("Using default value '%s' for amount.\n", defaultAmount)
 
-		amount = defaultAmount
+		return defaultAmount
 	}
+
+	return amount
+}
+
+// Returns default currency when currency is empty. Else returns currency.
+func getCurrency(currency string) string {
+	if currency == "" {
+		fmt.Printf("Using default value '%s' for currency.\n", defaultCurrency)
+
+		return defaultCurrency
+	}
+
+	return currency
 }
 
 // Find a single currency from the array of currencies.
