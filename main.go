@@ -130,6 +130,11 @@ func convert(c *cli.Context) {
 		os.Exit(1)
 	}
 
+	if selectedCurrency.TargetBuy == "" {
+		fmt.Printf("Cannot get the rates for %s. Looks like the buying rate is empty.\nUse 'forex l' to list buying rates of all available currencies.\n", currency)
+		os.Exit(1)
+	}
+
 	unitRate := getUnitRate(selectedCurrency)
 	buyingValue := amt * unitRate
 
